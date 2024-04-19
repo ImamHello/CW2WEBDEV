@@ -17,7 +17,6 @@ init() {
     author: 'Peter'
     });
     //for later debugging
-    console.log('db entry Peter inserted');
     
     this.db.insert({
     subject: "Didn't like it",
@@ -26,7 +25,6 @@ init() {
     author: 'Ann'
     });
     //for later debugging
-    console.log('db entry Ann inserted');
 }
 //a function to return all entries from the database
 getAllEntries() {

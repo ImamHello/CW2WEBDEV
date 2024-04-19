@@ -3,7 +3,9 @@
         {{> main}}
 </head>
 <body>
-
+{{#if nav}}
+        {{> nav}}
+    {{/if}}
     <h1>{{title}}</h1>
     <div class="text-right" style="margin-bottom: 1em;">
         {{^user}}
@@ -41,5 +43,12 @@
     {{^entries}}
     No entries yet.
     {{/entries}}
+
+    <div>
+        <p> wow</p>
+{{#if token}}
+        {{token}}
+    {{/if}}
+    </div>
 </body>
 </html>

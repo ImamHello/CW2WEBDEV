@@ -17,12 +17,23 @@ app.use(express.static(public));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); 
 
 const handlebars = express_handlebars.create({
-    partialsDir: path.join(__dirname, 'views/layouts')
+    partialsDir: path.join(__dirname, 'views/layouts'),
 });
+
+handlebars.handlebars.registerPartial('nav', '{{nav}}');
+
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
+
+handlebars.handlebars.registerHelper('if_eq', function(a, b, opts) {
+    if(a == b) // Or === depending on your needs
+        return opts.fn(this);
+    else
+        return opts.inverse(this);
+});
+
 
 const router = require('./routes/guestbookRoutes');
 app.use('/', router);

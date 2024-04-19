@@ -1,0 +1,67 @@
+<html>
+
+<head>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
+    <!-- <img src="images/logo.png" alt="logo" height="50" width="50"> -->
+    <a class="navbar-brand" href="/">Pantry Network</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about">About Us</a>
+        </li>
+        {{#if token}}
+        <li class="nav-item">
+          <a class="nav-link" href="/contact">Contact</a>
+        </li>
+        {{/if}}
+
+      </ul>
+    </div>
+
+    <div class="navbar justify-content-end">
+      <ul class="navbar-nav">
+
+      {{#unless token}}
+          <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+          </li>
+      {{/unless }}
+          {{#if_eq token 'user'}}
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{token}}</a>
+            </li>
+          {{/if_eq}}
+
+          {{#if_eq token 'admin'}}
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{token}}</a>
+            </li>
+          {{/if_eq}}
+
+          {{#if_eq token 'pantry'}}
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{token}}</a>
+            </li>
+          {{/if_eq}}
+
+        <li class="nav-item">
+          <a class="nav-link" href="/logout" id="logout">Log Out</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</body>
+
+
+</html>

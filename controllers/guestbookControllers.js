@@ -1,7 +1,13 @@
 const { title } = require("process");
 const guestbookDAO = require("../models/guestbookModel");
 const userDAO = require('../models/userModel.js');
+const { response } = require("express");
+const { verify } = require("crypto");
+const { verifyAdmin, verifypantry } = require("../auth/auth.js");
 const user_db = new userDAO();
+const jwt = require("jsonwebtoken");
+
+
 
 const db = new guestbookDAO();
 db.init();
@@ -18,17 +24,55 @@ exports.handle_login = function (req, res) {
 };
 
 exports.landing_page = function (req, res) {
-  db.getAllEntries()
-    .then((list) => {
-      res.render("entries", {
-        title: "Guest Book",
-        entries: list,
+  let accessToken = req.cookies.jwt;
+  if (accessToken) {
+    try{
+      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+        // Token is not expired, proceed with rendering entries
+        db.getAllEntries()
+          .then((list) => {
+            res.render("entries", {
+              title: "Guest Book",
+              entries: list,
+              token: payload.role,
+              'nav': true,
+            });
+          })
+          .catch((err) => {
+            console.log("promise rejected", err);
+          });
+  } catch (error) {
+    console.error('Token verification failed:', error);
+
+    db.getAllEntries()
+      .then((list) => {
+        res.render("entries", {
+          title: "Guest Book",
+          entries: list,
+          'nav': true
+        });
+      })
+      .catch((err) => {
+        console.log("promise rejected", err);
       });
-    })
-    .catch((err) => {
-      console.log("promise rejected", err);
-    });
+  }
+  }
+else {
+    db.getAllEntries()
+      .then((list) => {
+        res.render("entries", {
+          title: "Guest Book",
+          entries: list,
+          'nav': true
+        });
+      })
+      .catch((err) => {
+        console.log("promise rejected", err);
+      });
+  }
 };
+
+
 
 exports.show_new_entries = function (req, res) {
   res.render("newEntry", {

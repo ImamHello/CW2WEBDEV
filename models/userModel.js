@@ -53,21 +53,21 @@ class User {
         });
     }
 
-    lookupusername(username, cb) {
-        console.log(username)
+    // lookupusername(username, cb) {
+    //     console.log(username)
 
-        userDB.find({'username': username}, function (err, entries) {
-            console.log(entries)
-        if (err) {
-            return cb(null, null);
-        } else {
-            if (entries.length == 0) {
-                return cb(null, null);
-            }
-                return cb(null, entries[0]);
-            }
-        });
-    }
+    //     userDB.find({'username': username}, function (err, entries) {
+    //         console.log(entries)
+    //     if (err) {
+    //         return cb(null, null);
+    //     } else {
+    //         if (entries.length == 0) {
+    //             return cb(null, null);
+    //         }
+    //             return cb(null, entries[0]);
+    //         }
+    //     });
+    // }
 
     loadAllUsers()
     {

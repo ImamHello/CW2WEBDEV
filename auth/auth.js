@@ -23,7 +23,7 @@ exports.login = function (req, res,next) {
       console.log(result)
       if (result) {
         //use the payload to store information about the user such as username.
-        let payload = { username: username, role: user.role };
+        let payload = { user: user, role: user.role };
         //create the access token 
         let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET,{expiresIn: 300}); 
         res.cookie("jwt", accessToken);
@@ -35,16 +35,22 @@ exports.login = function (req, res,next) {
   });
 };
 
-exports.verify = function (req, res, next) {
+exports.verify = function (req, res, next) 
+{
   let accessToken = req.cookies.jwt;
-  if (!accessToken) {
+  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+
+  if (payload.role !== "user" && payload.role !== "admin") 
+  {
     return res.status(403).send();
   }
-  let payload;
-  try {
-    payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+
+  try 
+  {
     next();
-  } catch (e) {
+  } 
+  catch (e) 
+  {
     //if an error occured return request unauthorized error
     res.status(401).send();
   }
@@ -92,3 +98,24 @@ exports.verifypantry = function (req, res, next)
   }
 };
 
+exports.expired = function (req, res, next) {
+  try {
+    // Perform JWT verification
+    const decoded = jwt.verify(req.cookies.jwt, process.env.ACCESS_TOKEN_SECRET);
+    
+    // Check token expiration
+    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+    if (decoded.exp < currentTime) {
+      // Token has expired
+      res.type('text/plain');
+      res.send('token expired');
+    } else {
+      // Token is valid and not expired, continue to the next middleware
+      next();
+    }
+  } catch (error) {
+    // Token verification failed
+    console.error('Token verification failed:', error);
+    res.status(401).send(); // Unauthorized
+  }
+};
