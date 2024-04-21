@@ -1,6 +1,3 @@
-{"author":"TestUser","details":"fff","_id":"ioLUVTt9NnP7FCJm"}
 {"author":"testuser2","details":"f","_id":"j8KkhtF0IkrM65iW"}
-{"author":"testuser2","details":"this is a test","_id":"lcEOjDN23TYXjCec"}
-{"author":"testuser2","details":"1212","_id":"3H1EKWme9kOk36NW"}
 {"author":"testuser2","details":"SELECT * FROM users WHERE username='$input', injecting ' OR 1=1; DROP TABLE user.db;--","_id":"lKPigipaaybKaDnV"}
-{"$$deleted":true,"_id":"3H1EKWme9kOk36NW"}
+{"author":"testuser2","details":"this is a test","_id":"lcEOjDN23TYXjCec"}

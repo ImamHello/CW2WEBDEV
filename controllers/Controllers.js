@@ -281,7 +281,7 @@ exports.createUsers = function (req, res) {
   let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
 // renders page create user need to be loged in so payload dosn't have to be checked  
         res.render("user/createUser", {
-          title: "Guest Book",
+          title: "Create Users",
           user: "user",
           token: payload.role,
           'nav':true
