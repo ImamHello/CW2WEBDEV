@@ -5,11 +5,10 @@ const bcrypt = require('bcrypt');
 const { resolve } = require('path');
 const saltRounds = 12;
 
-// creates user class with username email password and role as its only varables it later creates _id when initulising the database users
+// creates user class with username password and role as its only varables it later creates _id when initulising the database users
 class User {
-    constructor(username, email, password,role) {
+    constructor(username, password,role) {
         this.username = username;
-        this.email = email;
         this.password = password;
         this.role = role;
     }
