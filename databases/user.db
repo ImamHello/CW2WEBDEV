@@ -1,4 +1,3 @@
-{"username":"ExamplePantry1","password":"$2b$12$XHqc66X4VWUv9jHJmclnhuscgWLO3aCP6l/bFIlpdAXU4FKzV0EY2","role":"pantry","_id":"0pXIpgxCazmb0P9z"}
 {"username":"pantry2","password":"$2b$12$N/l4DimdJ8H1IGjracv6SeaOWdq0ZLxZmTYMrfYofJLptNra7FWxO","role":"pantry","_id":"F0LyQIAVhkXZGQog"}
 {"username":"TestUser","password":"$2b$12$6a32Yn6XZly6AjJc/cjIAes83mxAIUwqKf6Lm8lWZvL3Vp3MEgQJm","role":"user","_id":"IOlMZn2Ky9rR9f9F"}
 {"username":"iamhello","password":"$2b$12$.uG2qsmD93ztAz2QGrXqPe8N91YKOBQd.ZcHwXKHlHKKSe2Dk4a3G","role":"admin","_id":"TuzBeGShMSupV6CV"}
@@ -6,4 +5,3 @@
 {"username":"thisistherealtestforthing","password":"$2b$12$3uLDO1fPYeaFYFo1eza57uzOK.hC5/GGVJzFQ04xBw0wHGY.MYjIq","role":"user","_id":"fXY3Po1YEpX10SRQ"}
 {"username":"testuser2","password":"$2b$12$hJLZa0YX6Gdz3./50Sv7quyhaHm7o6i/gEf9T2HDll6Ry3wad8Qbi","role":"user","_id":"rYsVaWEx2RzGdxHJ"}
 {"username":"a","password":"$2b$12$FwE1vzE5dQJfTs4yaZ4cHuxZ3zZTQFoQ4H1j4waNrLu/vhiugE6kq","role":"admin","_id":"yv5hEcYm57Gyp4bA"}
-{"$$deleted":true,"_id":"0pXIpgxCazmb0P9z"}
