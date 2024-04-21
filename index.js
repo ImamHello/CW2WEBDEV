@@ -2,7 +2,7 @@ const express = require('express');
 const express_handlebars = require('express-handlebars');
 const app = express();
 require('dotenv').config(); // loads data from .env file
-
+const moment = require('moment');
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
@@ -32,6 +32,11 @@ handlebars.handlebars.registerHelper('if_eq', function(a, b, opts) {
         return opts.fn(this);
     else
         return opts.inverse(this);
+});
+
+handlebars.handlebars.registerHelper('formatTime', function (date, format) {
+    var mmnt = moment(date);
+    return mmnt.format(format);
 });
 
 

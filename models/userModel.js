@@ -87,7 +87,25 @@ class User {
             });
         });
     }
-}
 
+
+getPantrys() 
+{
+    //return a Promise object, which can be resolved or rejected
+    return new Promise((resolve, reject) => {
+    //find all pantrys from the userDB
+    //with error first callback function, err=error, entries=data
+    userDB.find({ role: 'pantry' }, function(err, entries) {
+    //if error occurs reject Promise
+    if (err) {
+    reject(err);
+    //if no error resolve the promise and return the data
+    } else {
+    resolve(entries);
+    }
+    })
+    })
+    }
+}
 
 module.exports = User;

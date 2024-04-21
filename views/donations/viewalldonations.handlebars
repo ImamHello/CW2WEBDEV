@@ -1,0 +1,32 @@
+<html>
+<head>
+        {{> main}}
+</head>
+<body>
+{{#if nav}}
+        {{> nav}}
+    {{/if}}
+    <h1>{{title}}</h1>
+
+
+    {{#entries}}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{pantry}}</h4>
+            <p class="card-text">
+                {{contents}}
+            </p>
+            <div class="card-footer">
+                Donate by {{username}}</a>, expires: {{formatTime exdate "DD-MM-YYYY"}} additional information: {{additional}} 
+                <br>
+                <a href="/claim/{{_id}}">claim</a>
+            </div>
+        </div>
+    </div>
+    {{/entries}}
+    {{^entries}}
+    No entries yet.
+    {{/entries}}
+
+</body>
+</html>

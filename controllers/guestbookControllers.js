@@ -1,13 +1,15 @@
 const { title } = require("process");
 const guestbookDAO = require("../models/guestbookModel");
 const userDAO = require('../models/userModel.js');
+const pantryDAO = require('../models/donationModel.js');
+
 const { response } = require("express");
 const { verify } = require("crypto");
 const { verifyAdmin, verifypantry } = require("../auth/auth.js");
 const user_db = new userDAO();
+const donationDB = new pantryDAO();
+
 const jwt = require("jsonwebtoken");
-
-
 
 const db = new guestbookDAO();
 db.init();
@@ -201,29 +203,105 @@ exports.logout = function (req, res) {
 };
 
 
-exports.donate = function (req, res) {
-  let accessToken = req.cookies.jwt;
-  if (accessToken) {
-    try{
-      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-        // Token is not expired, proceed with rendering entries
-            res.render("user/donate", {
-              title: "Donation",
-              token: payload.role,
-              'nav': true,
-            });         
-  } catch (error) {
-    console.error('Token verification failed:', error);
 
-    res.redirect("login")
+//pantry donations
+exports.donate = function (req, res) {
+  user_db.getPantrys()
+    .then((list) => {
+      res.render("user/donate", {
+        title: "Donation",
+        pantrys: list,
+        'nav': true,
+      });
+    })
+    .catch((err) => {
+      res.redirect("login"); // Redirect on error
+    });
+};
+//pantry donations
+
+exports.makeDonation = function (req, res) {
+    console.log('processing contact-new_entry controller');
+    let accessToken = req.cookies.jwt;
+    let claimed = false;
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    console.log(req.body.donation_type, req.body.pantry, req.body.Expiration_date,req.body.additional, payload.user.username);
+    donationDB.create(req.body.donation_type, req.body.pantry, req.body.Expiration_date,req.body.additional,payload.user.username,claimed ,(err, newdonation)=> {
+      if (err) {
+        res.status(500).send("Error creating user");
+        return;
+    }
+  else{
+    donationDB.expiredcheck()
+    res.redirect("/")
   }
+});
+}
+//pantry view all donations 
+exports.alldonations = function (req, res) {
+  donationDB.expiredcheck()
+
+  donationDB.alldonations()
+    .then((list) => {
+      res.render('donations/viewalldonations', {
+        title: "donations",
+        entries: list,
+        'nav': true,
+      }); // Closing parenthesis was missing here
+    })
+    .catch((err) => {
+      console.log("Error fetching donations:", err);
+      res.status(500).send("Error fetching donations");
+    });
   }
-else {
-  res.redirect("login")
+
+exports.viewdonation = function (req, res) {
+  try {
+    donationDB.expiredcheck()
+
+    const donationId = req.params._id; // Corrected variable name
+    let accessToken = req.cookies.jwt;
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    const userid = payload.user.username;
+
+    console.log(userid,donationId)
+    donationDB.claimDonation(donationId,userid ) // Corrected function call
+      .then(entries => {
+        console.log("Documents retrieved:", entries);
+        res.redirect("/claimed")
+      })
+      .catch(err => {
+        console.error("Error claiming donation:", err);
+        res.status(500).json({ message: "Internal server error" });
+      });
+  } catch (error) {
+    console.error("Error fetching property data:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
+exports.claimed = function (req, res) {
+  let accessToken = req.cookies.jwt;
+  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+  const userid = payload.user.username
+  if(payload.role == 'pantry'){
+    donationDB.allpantrydonations(userid,)
+    .then((list) => {
+      res.render('donations/viewpantrydonations', {
+        title: "donations",
+        entries: list,
+        'nav': true,
+      }); // Closing parenthesis was missing here
+    })
+    .catch((err) => {
+      console.log("Error fetching donations:", err);
+      res.status(500).send("Error fetching donations");
+    });
+  }
 
+  }
+
+//admin create users
 exports.createUsers = function (req, res) {
   let accessToken = req.cookies.jwt;
   let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);

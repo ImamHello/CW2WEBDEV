@@ -3,14 +3,16 @@
         {{>main}}
 </head>
 <body>
-{{#if nav}}
+    {{#if nav}}
         {{> nav}}
     {{/if}}
 
     <div class="mx-auto h-100 d-flex align-items-center justify-content-center">
-    <h1>{{title}}</h1>
 <div class="container">
-    <form method="POST" action="/createDonation">
+        <h1 class="d-flex align-items-center justify-content-center">{{title}}</h1>
+
+    <form method="POST" action="/donate">
+<div class="form-group d-flex align-items-center justify-content-center">
 
       <label for="donation_type">Donation type:</label>
       <select name="donation_type" id="donation_type">
@@ -19,28 +21,32 @@
         <option value="baked_goods">Baked goods</option>
         <option value="Meat">Meat</option>
       </select>
-
-      {{!-- <label for="pantry">Pantry:</label>
-      <select name="pantry" id="pantry">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select> --}}
-
-      {{#pantries}}
-      <label for="pantry">Pantry:</label>
-     <select name="pantry" id="pantry"></select>
-        <option value={{pantry.name}}>{{pantry.name}}</option>
+</div>
+{{!-- <div class="form-group d-flex align-items-center justify-content-center">
+    <label for="pantry">Pantry:</label>
+    <select name="pantry" id="pantry">
+    {{#pantrys}}
+        <option value="{{username}}">{{username}}</option>
+    {{/pantrys}}
+</select>
     </select>
-    {{/pantries}}
+</div> --}}
+<div class="form-group d-flex align-items-center justify-content-center">
 
     <label for="Expiration_date">Expiration date:</label>
-    <input type="date" id="Expiration_date" name="Expiration_date">
+    <input type="date" id="Expiration_date" name="Expiration_date" required>
+</div>
+
+<div class="form-group d-flex align-items-center justify-content-center">
+<label for="additional">Additional donation information</label>
+<input type="text" id="additional" name="additional" placeholder="extra information.." required>
+
+</div>
+
+<div class="form-group d-flex align-items-center justify-content-center">
 
       <input type="submit" value="Send">
-
+</div>
     </form>
   </div>
   </div>

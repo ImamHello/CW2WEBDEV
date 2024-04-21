@@ -1,0 +1,30 @@
+<html>
+<head>
+        {{> main}}
+</head>
+<body>
+{{#if nav}}
+        {{> nav}}
+    {{/if}}
+    <h1>{{title}}</h1>
+
+
+    {{#entries}}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"> Donate by {{username}}</h4>
+            
+            <div class="card-footer">
+                expires: {{formatTime exdate "DD-MM-YYYY"}} 
+                <br>
+                additional information: {{additional}} 
+            </div>
+        </div>
+    </div>
+    {{/entries}}
+    {{^entries}}
+    No entries yet.
+    {{/entries}}
+
+</body>
+</html>
