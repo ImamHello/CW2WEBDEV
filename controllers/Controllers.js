@@ -55,16 +55,6 @@ exports.landing_page = function (req, res) {
 }
 
 
-exports.post_new_entry = function (req, res) {
-  console.log("processing post-new_entry controller");
-  if (!req.body.author) {
-    response.status(400).send("Entries must have an author.");
-    return;
-  }
-  db.addEntry(req.body.author, req.body.subject, req.body.contents);
-  res.redirect("/loggedIn");
-};
-
 exports.show_user_entries = function (req, res) {
   let accessToken = req.cookies.jwt;
   if (accessToken) {
