@@ -14,6 +14,12 @@ router.get('/register', controller.show_register_page);
 router.post('/register', controller.post_new_user);
 router.get("/loggedIn",verify, controller.loggedIn_landing);
 router.get("/logout", controller.logout);
+router.get("/donate",verify, controller.donate);
+router.get("/createUsers",verifyAdmin,controller.createUsers);
+router.post("/createUsers",verifyAdmin,controller.post_createUsers);
+
+
+
 
 router.use(function(req, res) {
         res.status(404);

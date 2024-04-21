@@ -1,9 +1,14 @@
 <html lang="en">
 <head>
     {{> main}}
+
 </head>
-<body class="container">
-<h2>Write a new entry</h2>
+
+<body>
+  {{>nav}}
+
+  <div class="container">
+  <h2>Write a new entry</h2>
 <div class="text-right" style="margin-bottom: 1em;">
 {{^user}}
   <a id="login" href="/register" class="btn btn-primary">
@@ -44,5 +49,6 @@ required>
 <input type="submit" value="Post entry" class="btn btn-primary">
 </div>
 </form>
-</body
+</div>
+</body>
 </html>

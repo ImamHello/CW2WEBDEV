@@ -26,6 +26,18 @@
         </li>
         {{/if}}
 
+        {{#if_eq token 'user'}}
+            <li class="nav-item">
+              <a class="nav-link" href="/donate">donate</a>
+            </li>
+          {{/if_eq}}
+
+          {{#if_eq token 'admin'}}
+            <li class="nav-item">
+              <a class="nav-link" href="/createUsers">Create users</a>
+            </li>
+          {{/if_eq}}
+
       </ul>
     </div>
 

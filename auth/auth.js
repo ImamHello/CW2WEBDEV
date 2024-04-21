@@ -38,84 +38,56 @@ exports.login = function (req, res,next) {
 exports.verify = function (req, res, next) 
 {
   let accessToken = req.cookies.jwt;
-  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-
-  if (payload.role !== "user" && payload.role !== "admin") 
-  {
-    return res.status(403).send();
-  }
-
-  try 
-  {
+  try {
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    if (payload.role !== "user" && payload.role !== "admin") {
+      return res.status(403).send();
+    }
     next();
-  } 
-  catch (e) 
-  {
-    //if an error occured return request unauthorized error
-    res.status(401).send();
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      console.error('JWT token expired');
+      return res.redirect("/login"); // Redirect to login page if token is expired
+    }
+    console.error('Token verification failed:', error);
+    res.status(401).send(); // Unauthorized due to token verification failure
   }
 };
 
 exports.verifyAdmin = function (req, res, next) 
 {
   let accessToken = req.cookies.jwt;
-  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-
-  if (payload.role != "admin") 
-  {
-    return res.status(403).send();
-  }
-
-  try 
-  {
+  try {
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    if (payload.role !== "admin") {
+      return res.status(403).send();
+    }
     next();
-  } 
-  catch (e) 
-  {
-    //if an error occured return request unauthorized error
-    res.status(401).send();
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      console.error('JWT token expired');
+      return res.redirect("/login"); // Redirect to login page if token is expired
+    }
+    console.error('Token verification failed:', error);
+    res.status(401).send(); // Unauthorized due to token verification failure
   }
 };
 
 exports.verifypantry = function (req, res, next) 
 {
   let accessToken = req.cookies.jwt;
-  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-
-  if (payload.role != "pantry") 
-  {
-    return res.status(403).send();
-  }
-
-  try 
-  {
-    next();
-  } 
-  catch (e) 
-  {
-    //if an error occured return request unauthorized error
-    res.status(401).send();
-  }
-};
-
-exports.expired = function (req, res, next) {
   try {
-    // Perform JWT verification
-    const decoded = jwt.verify(req.cookies.jwt, process.env.ACCESS_TOKEN_SECRET);
-    
-    // Check token expiration
-    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-    if (decoded.exp < currentTime) {
-      // Token has expired
-      res.type('text/plain');
-      res.send('token expired');
-    } else {
-      // Token is valid and not expired, continue to the next middleware
-      next();
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    if (payload.role !== "pantry") {
+      return res.status(403).send();
     }
+    next();
   } catch (error) {
-    // Token verification failed
+    if (error instanceof jwt.TokenExpiredError) {
+      console.error('JWT token expired');
+      return res.redirect("/login"); // Redirect to login page if token is expired
+    }
     console.error('Token verification failed:', error);
-    res.status(401).send(); // Unauthorized
+    res.status(401).send(); // Unauthorized due to token verification failure
   }
 };

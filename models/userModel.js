@@ -10,7 +10,7 @@ class User {
         this.email = email;
         this.password = password;
     }
-    create(username, password, cb) {
+    create(username, password, role, cb) {
 
         this.lookup(username, (err, existingUser) => {
             if (err) {
@@ -26,7 +26,7 @@ class User {
             var entry = {
                 username: username,
                 password: hash,
-                role: 'user',
+                role: role,
             };
             userDB.insert(entry, function (err, newUser) {
                 if (err) {

@@ -1,0 +1,48 @@
+<html>
+<head>
+        {{>main}}
+</head>
+<body>
+{{#if nav}}
+        {{> nav}}
+    {{/if}}
+
+    <div class="mx-auto h-100 d-flex align-items-center justify-content-center">
+<div class="container">
+        <h1 class="d-flex align-items-center justify-content-center">{{title}}</h1>
+
+    <div class="align-items-center" style="height: 80vh;">
+        <br>
+    <form method="POST" action="/createUsers">
+    <div class="d-flex align-items-center justify-content-center">
+
+      <label for="user_type">User Type:</label>
+      <select name="user_type" id="user_type">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+        <option value="pantry">Pantry</option>
+      </select>
+    </div>
+    <div class="form-group">
+        {{user-name-error}}
+        <label for="username">User Name</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Enter user name" required>
+    </div>
+     <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="pass" placeholder="Enter password" required>
+    </div>
+     <div class="d-flex align-items-center justify-content-center">
+
+
+    <div class="text-center mt-2">
+            <button class="primaryAction btn rounded-pill btn-primary px-5" type="submit">Create</button>
+            <br>
+          </div>     
+          </div>
+    </form>
+  </div>
+  </div>
+  </div>
+</body>
+</html>
