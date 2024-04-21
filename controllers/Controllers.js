@@ -10,7 +10,7 @@ const { verifyAdmin, verifypantry } = require("../auth/auth.js");
 const user_db = new userDAO();
 const donationDB = new pantryDAO();
 const contact_db = new contactDAO();
-// inituslses the databse as implementation of the user DAO alias 
+// inituslses the databse as implementation of the user DAO alias
 
 const jwt = require("jsonwebtoken");
 

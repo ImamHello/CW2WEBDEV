@@ -11,6 +11,7 @@ const path = require('path');
 const public = path.join(__dirname, 'public');
 app.use(express.static(public));
 
+
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); 
 
 // setting up handlebars as the template engine rather than useing mustashe and some fucntions helpers 
@@ -52,6 +53,7 @@ handlebars.handlebars.registerHelper('formatTime', function (date, format) {
 // getting router setup in index 
 const router = require('./routes/Routes');
 app.use('/', router);
+
 
 // listining for the env port for when the site is deployed or port 3000
 app.listen(process.env.PORT || 3000, () => {
