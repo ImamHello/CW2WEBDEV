@@ -316,16 +316,22 @@ exports.userControl = function (req, res) {
 
 // implemetnts delete user gets user id from body and calls delete user if there is an error throws 500 and prints console error if sucessful print the userid of the deleted user and redirect to usercontrol
 exports.deleteuser = function (req, res) {
-  const userId = req.body.userId;
-  user_db.deleteUser(userId, (err) => {
-      if (err) {
-          console.error("Error deleting user:", err);
-          res.status(500).json({ message: "Internal server error" });
-      } else {
-          console.log("User deleted successfully:", userId);
-      }
-  });
-  res.redirect("/userControl");
+  try{
+    const userId = req.body.userId;
+    user_db.deleteUser(userId, (err) => {
+        if (err) {
+            console.error("Error deleting user:", err);
+            res.status(500).json({ message: "Internal server error" });
+        } else {
+            console.log("User deleted successfully:", userId);
+        }
+    });
+    res.redirect("/userControl");
+  }
+  catch{
+    res.redirect('login')
+  }
+  
 
 };
 

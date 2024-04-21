@@ -8,3 +8,7 @@
 {"username":"testuser2","password":"$2b$12$hJLZa0YX6Gdz3./50Sv7quyhaHm7o6i/gEf9T2HDll6Ry3wad8Qbi","role":"user","_id":"rYsVaWEx2RzGdxHJ"}
 {"username":"seethis","password":"$2b$12$YpZiSungjJmkNUUyCdT0teYDofEkJJ9vCh4hVlAmbGIcqyxP0coJe","role":"user","_id":"v6yKxOpoNdRqgXSj"}
 {"username":"a","password":"$2b$12$FwE1vzE5dQJfTs4yaZ4cHuxZ3zZTQFoQ4H1j4waNrLu/vhiugE6kq","role":"admin","_id":"yv5hEcYm57Gyp4bA"}
+{"username":"userisreallycool","password":"$2b$12$ss16d2lUK2PYmi6k9WtBw.49DKN7Gq2KRV2ax29aqauv4Xmw22wnG","role":"pantry","_id":"AO52rbfv396qVEAt"}
+{"username":"userisreallycoolandrad","password":"$2b$12$4ySErGMTmR0ofEXtwZgUre4H9ERB0Ue53T2Gzr9AxnZatLmlSw.La","role":"pantry","_id":"OvJNnbgiLsvT8KCQ"}
+{"$$deleted":true,"_id":"AO52rbfv396qVEAt"}
+{"$$deleted":true,"_id":"OvJNnbgiLsvT8KCQ"}
