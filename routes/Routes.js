@@ -20,10 +20,11 @@ router.post('/register', controller.post_new_user);
 router.get("/loggedIn",verify, controller.loggedIn_landing);
 router.get("/logout", controller.logout);
 // donation routs
-router.get("/donate",verify, controller.donate);
-router.post("/donate",verify, controller.makeDonation);
 router.get("/alldonations",verifyspecial , controller.alldonations);
 router.post("/alldonations",verifyspecial , controller.deletedonation);
+router.get("/donate",verify, controller.donate);
+router.post("/donate",verify, controller.makeDonation);
+
 
 //contact routs 
 router.get("/contact",verify,controller.contact)
@@ -60,4 +61,5 @@ router.use(function(err, req, res, next) {
          res.type('text/plain');
          res.send('Internal Server Error.');
      });
+     
 module.exports = router;

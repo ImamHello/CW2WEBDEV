@@ -161,25 +161,32 @@ exports.makeDonation = function (req, res) {
 }
 //pantry view all donations checks for expired donatioins uses payload token for naviagtion if an error occurs returns 500 server error and prints the error
 exports.alldonations = function (req, res) {
-  donationDB.expiredcheck()
+  donationDB.expiredcheck();
   let accessToken = req.cookies.jwt;
-  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-  console.log(payload.role)
+  let payload;
+  try {
+    payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    console.log(payload.role);
 
-  donationDB.alldonations()
-    .then((list) => {
-      res.render('donations/viewalldonations', {
-        title: "All Donations",
-        entries: list,
-        token: payload.role,
-        'nav': true,
-      }); // Closing parenthesis was missing here
-    })
-    .catch((err) => {
-      console.log("Error fetching donations:", err);
-      res.status(500).send("Error fetching donations");
-    });
+    donationDB.alldonations()
+      .then((list) => {
+        res.render('donations/viewalldonations', {
+          title: "All Donations",
+          entries: list,
+          token: payload.role,
+          'nav': true,
+        });
+      })
+      .catch((err) => {
+        console.log("Error fetching donations:", err);
+        res.status(500).send("Error fetching donations");
+      });
+  } catch (error) {
+    console.log("Error verifying token:", error);
+    res.status(401).send("Unauthorized");
   }
+};
+
 
   // impliments view cheks to see if any of the donations from the doantion db are expired by calling expiredcheck uses acess token and payload to get the useranme claim dontaion passes in
   // both donationId,userid then if sucesssful prints Documents retrieved and the entires from the donation that were claimed if an error occurs then a 500 server error is called
