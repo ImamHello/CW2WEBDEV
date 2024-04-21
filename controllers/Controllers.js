@@ -3,28 +3,31 @@ const userDAO = require('../models/userModel.js');
 const pantryDAO = require('../models/donationModel.js');
 const contactDAO = require('../models/contactModel.js');
 
+// sets up required varables 
 const { response } = require("express");
 const { verify } = require("crypto");
 const { verifyAdmin, verifypantry } = require("../auth/auth.js");
 const user_db = new userDAO();
 const donationDB = new pantryDAO();
 const contact_db = new contactDAO();
-
+// inituslses the databse as implementation of the user DAO alias 
 
 const jwt = require("jsonwebtoken");
 
-
+// login page implmented from the login template with the title as login
 exports.show_login = function (req, res) {
   res.render("user/login",{
     title: "login",
   });
 };
 
+// redirects to homepage after logging in 
 exports.handle_login = function (req, res) {
-  // res.redirect("/new");
   res.redirect("/")
 };
 
+// implements the landing page checks for the accessToken for logged in user navigation but it is implemented so all users even unlogged inusers or user with expired jwt tokens can acsess the homepage
+// passes the title into the tempate 
 exports.landing_page = function (req, res) {
   let accessToken = req.cookies.jwt;
   try {
@@ -33,139 +36,87 @@ exports.landing_page = function (req, res) {
       // Token is not expired, proceed with rendering entries
       if (payload.role) {
         res.render("entries", {
-          title: "Scotish Pantry Network",
+          title: "Scottish Pantry Network",
           token: payload.role,
           'nav': true, 
         });
-        return; // Exit after rendering
+        return; // returns after rendering
       } 
     }
   } catch (err) {
     res.render("entries", {
-      title: "Scotish Pantry Network",
+      title: "Scottish Pantry Network",
       'nav': true, 
     });
   }
 
   // If no token or token verification failed, render the "entries" view with default settings
   res.render("entries", {
-    title: "Scotish Pantry Network",
+    title: "Scottish Pantry Network",
     'nav': true, // Removed quotes around 'nav'
   });
 }
 
 
-exports.show_user_entries = function (req, res) {
-  let accessToken = req.cookies.jwt;
-  if (accessToken) {
-    try{
-      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-
-    let user = req.params.author;
-    db.getEntriesByUser(user)
-      .then((entries) => {
-        res.render("entries", {
-          title: "Guest Book",
-          user: "user",
-          token: payload.role,
-          entries: entries,
-          'nav':true
-        });
-      })
-      .catch((err) => {
-        console.log("Error: ");
-        console.log(JSON.stringify(err));
-      });  
-    }catch(error){
-      console.error('Token verification failed:', error);
-
-    db.getAllEntries()
-      .then((list) => {
-        res.render("entries", {
-          title: "Guest Book",
-          entries: list,
-          'nav': true
-        });
-      }).catch((err) => {
-        console.log("promise rejected", err);
-      });
-    }
-  }
-  else{
-    let user = req.params.author;
-    db.getEntriesByUser(user)
-      .then((entries) => {
-        res.render("entries", {
-          title: "Guest Book",
-          user: "user",
-          entries: entries,
-          'nav':true
-        });
-      })
-      .catch((err) => {
-        console.log("Error: ");
-        console.log(JSON.stringify(err));
-      });  
-
-  }
-
-};
-
+// renders the register page and passes in the title of register
 exports.show_register_page = function (req, res) { 
   res.render("user/register",{
     title: "Register"
   });
 }
 
+
+// controller for posting a new user get usename and password from body
 exports.post_new_user = function (req, res) {
   const username = req.body.username;
   const password = req.body.pass;
+  // sets role to user
   const role = "user";
+  // checks if there is a password if not sends an error code of 401 unautherorised requenst
   if (!username || !password) {
     res.send(401, "no user or no password");
     return;
   }
-
+// sends 404 if it cant find the user 
     if (!req.body.username) {
       res.status(404).send("User not found");
       return;
     }
 
+    // creates the user from the varabeles username password and role if there is a server error it send the status code 500
     user_db.create(username, password ,role, (err, newUser) => {
       if (err) {
           res.status(500).send("Error creating user");
           return;
       }
-
+// if sucsesffuly rediurects user to login
       if (newUser) {
           res.redirect("/login");
       } else {
+        // if suer already exitst sends error code with text User already exists
           res.status(409).send("User already exists");
       }
   });
 };
 
+// send user to loggin page with the title and template 
 exports.loggedIn_landing = function (req, res) {
-  db.getAllEntries()
-    .then((list) => {
       res.render("entries", {
-        title: "Guest Book",
-        user: "user",
-        entries: list,
+        title: "Login",
       });
-    })
-    .catch((err) => {
-      console.log("promise rejected", err);
-    });
 };
 
+// clears the vwt token and redirects back to the home page
 exports.logout = function (req, res) {
   res.clearCookie("jwt").status(200).redirect("/");
 };
 
 
 
-//pantry donations
+// implments pantry donations
+// uses the payload for the username for the create donation function if successful it adds the donation to the database if an error occurs it throws it to an internal server error 
+// if successful it calls it gets a list of pantrys and passes it to the template donate with the user role for navigating and redirects the home apge if un sucsessful it redircts the user to the login page
+
 exports.donate = function (req, res) {
   let accessToken = req.cookies.jwt;
  try{
@@ -189,9 +140,10 @@ exports.donate = function (req, res) {
   
 };
 //pantry donations
+// sets a varable called claimed to false and uses the payload for the username for the create donation function if sucessful it addes the donation to the database if an error occurs it throws a interanl server error
+// route if sucsessful it calls donationDB.expiredcheck() to check and delete if the newly created donation is expired and rediredcts the user to the home page  
 
 exports.makeDonation = function (req, res) {
-    console.log('processing contact-new_entry controller');
     let accessToken = req.cookies.jwt;
     let claimed = false;
     let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
@@ -207,7 +159,7 @@ exports.makeDonation = function (req, res) {
   }
 });
 }
-//pantry view all donations 
+//pantry view all donations checks for expired donatioins uses payload token for naviagtion if an error occurs returns 500 server error and prints the error
 exports.alldonations = function (req, res) {
   donationDB.expiredcheck()
   let accessToken = req.cookies.jwt;
@@ -229,6 +181,8 @@ exports.alldonations = function (req, res) {
     });
   }
 
+  // impliments view cheks to see if any of the donations from the doantion db are expired by calling expiredcheck uses acess token and payload to get the useranme claim dontaion passes in
+  // both donationId,userid then if sucesssful prints Documents retrieved and the entires from the donation that were claimed if an error occurs then a 500 server error is called
 exports.viewdonation = function (req, res) {
   try {
     donationDB.expiredcheck()
@@ -254,6 +208,8 @@ exports.viewdonation = function (req, res) {
   }
 };
 
+// implemtns the delete donation which take in the doation id from the template body and uses that to call removeDonation by passing it the dontaion id it then if sucsessful prints and rediredcts the user
+// to the all donations page if there is an error in the deletion then in interal server error is triggered 
 exports.deletedonation = function (req, res) {
   try {
       const donationId = req.body._id;
