@@ -12,6 +12,8 @@ exports.login = function (req, res,next) {
   user_db.lookup(username, function (err, user) {
     if (err) {
       console.log("error looking up user", err);
+      res.redirect("/")
+
       return res.status(401).send();
     }
     if (!user) {
@@ -29,7 +31,8 @@ exports.login = function (req, res,next) {
         res.cookie("jwt", accessToken);
         next();
       } else {
-        return res.render("user/login"); //res.status(403).send();
+        return res.redirect('/register');
+
       }
     });
   });
@@ -56,11 +59,15 @@ exports.verify = function (req, res, next)
 
 exports.verifyAdmin = function (req, res, next) 
 {
+  try{
+
+  
   let accessToken = req.cookies.jwt;
   try {
     let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
     if (payload.role !== "admin") {
-      return res.status(403).send();
+      return res.redirect('/register');
+
     }
     next();
   } catch (error) {
@@ -69,8 +76,13 @@ exports.verifyAdmin = function (req, res, next)
       return res.redirect("/login"); // Redirect to login page if token is expired
     }
     console.error('Token verification failed:', error);
-    res.status(401).send(); // Unauthorized due to token verification failure
+    return res.redirect("/login"); // Redirect to login page if token is expired
   }
+}catch{
+  return res.redirect("/login")
+
+}
+
 };
 
 exports.verifypantry = function (req, res, next) 

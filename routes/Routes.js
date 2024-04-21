@@ -27,8 +27,8 @@ router.post("/alldonations",verifyspecial , controller.deletedonation);
 //contact routs 
 router.get("/contact",verify,controller.contact)
 router.post("/contact",verify,controller.sendcontact)
-router.get("/contacts",verify,controller.getallcontacts)
-router.post("/contacts",verify,controller.deletecontact)
+router.get("/contacts",verifyAdmin,controller.getallcontacts)
+router.post("/contacts",verifyAdmin,controller.deletecontact)
 
 
 // routs for claiming unclaim and deleting of dontations

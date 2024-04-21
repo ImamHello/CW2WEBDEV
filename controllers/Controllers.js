@@ -1,4 +1,4 @@
-const { title } = require("process");
+// setting the modes to there dao first instances 
 const userDAO = require('../models/userModel.js');
 const pantryDAO = require('../models/donationModel.js');
 const contactDAO = require('../models/contactModel.js');
@@ -167,17 +167,26 @@ exports.logout = function (req, res) {
 
 //pantry donations
 exports.donate = function (req, res) {
+  let accessToken = req.cookies.jwt;
+ try{
+  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+
   user_db.getPantrys()
     .then((list) => {
       res.render("user/donate", {
         title: "Donation",
         pantrys: list,
+        token: payload.role,
         'nav': true,
       });
     })
     .catch((err) => {
       res.redirect("login"); // Redirect on error
     });
+ }catch{
+  res.redirect('/')
+ }
+  
 };
 //pantry donations
 
@@ -263,7 +272,8 @@ exports.deletedonation = function (req, res) {
     }
 };
 
-
+// implements claimed payload for naviagtion cheks for role on back end too passes in user id to allpantrydonations gets a list and sends it to the template viewpantrydonations if etherr is an error it send a 500
+// error code 
 exports.claimed = function (req, res) {
   let accessToken = req.cookies.jwt;
   let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
@@ -286,6 +296,7 @@ exports.claimed = function (req, res) {
 
   }
 
+  // implments the unclaim donation implements accessToken payload user id is gotten from the payload for the dontaion to be passed into unclaim donation
   exports.unclaimDonation = function (req, res) {
     let accessToken = req.cookies.jwt;
     let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
@@ -300,11 +311,12 @@ exports.claimed = function (req, res) {
 
 
 
-//admin create users
+//implments  admins create users
 exports.createUsers = function (req, res) {
+  // token and payload for navigation bar token based on a users role 
   let accessToken = req.cookies.jwt;
   let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-
+// renders page create user need to be loged in so payload dosn't have to be checked  
         res.render("user/createUser", {
           title: "Guest Book",
           user: "user",
@@ -314,7 +326,7 @@ exports.createUsers = function (req, res) {
       
 };
 
-//user control
+//user control implementation uses accessToken and payload for naviagtion bar loads users for display on the template if there is an error throws 500 server error fetching users or verifying the token 
 exports.userControl = function (req, res) {
   try {
       let accessToken = req.cookies.jwt;
@@ -339,7 +351,7 @@ exports.userControl = function (req, res) {
   }
 };
 
-
+// implemetnts delete user gets user id from body and calls delete user if there is an error throws 500 and prints console error if sucessful print the userid of the deleted user and redirect to usercontrol
 exports.deleteuser = function (req, res) {
   const userId = req.body.userId;
   user_db.deleteUser(userId, (err) => {
@@ -354,7 +366,7 @@ exports.deleteuser = function (req, res) {
 
 };
 
-
+// implements create users gets varables from template body checks if it got varables if it did create noew user if not 500 status or 409 already exists  
 exports.post_createUsers = function (req, res) {
   const username = req.body.username;
   const password = req.body.pass;
@@ -376,8 +388,8 @@ exports.post_createUsers = function (req, res) {
           res.status(500).send("Error creating user");
           return;
       }
-
-      if (newUser) {
+// if new user if false then it sends a 409 error if its true to redirects to homepage and logs the registered user 
+      if (!newUser) {
           console.log("register user", username,  role, "role");
           res.redirect("/");
       } else {
@@ -385,6 +397,8 @@ exports.post_createUsers = function (req, res) {
       }
   });
 };
+
+// implements the about us page uses accessToken and payload for the navigation bar renders the page also renders the page if there is no token as anyone can acess the about us page 
 
 exports.aboutius = function (req, res) {
   let accessToken = req.cookies.jwt;
@@ -413,7 +427,7 @@ exports.aboutius = function (req, res) {
   }
 }
 
-
+// implemets contact usess the acesss token to implemnt the navigation bar for when on the conatict page if it cant it 
 exports.contact = function (req, res) {
   let accessToken = req.cookies.jwt;
 
@@ -428,19 +442,17 @@ exports.contact = function (req, res) {
       });
     } else {
       // Handle case when there's no access token
-      res.render("contact", {
-        title: "Contact Us",
-        'nav': true    
-      }); 
+      res.redirect("/login")
     }
   } catch (error) {
-    res.render("contact", {
-      title: "Contact Us",
-      'nav': true  
-    }); 
+    res.redirect("/login") // again in the event of another error it promits a login 
+
   }
 }
 
+
+// sends implments contact checks accesstoken if there is one it decodes the payload for the logged in  user so it can use that as the useranme for the contact message gets help from 
+// text box in the template which takes in the user input on a submit if theres an error it thows interal server error  or throws to login if the token has expoired  
 exports.sendcontact = function (req, res) {
   let accessToken = req.cookies.jwt;
   try {
@@ -477,12 +489,12 @@ exports.sendcontact = function (req, res) {
   }
 }
 
-
+// implemetns get all contacts from the contacts database uses the allconatacts fucntion uses accessToken and payload to pass in the role for the navigation bar 
 exports.getallcontacts = function (req, res) {
     contact_db.allcontacts()
     let accessToken = req.cookies.jwt;
     let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-  
+  // gets all contacts then puts them into a list to be displayed into the template with the navigaion token and setting the naviation to true if there are errors it thorws it to a interal server error 
     contact_db.allcontacts()
       .then((list) => {
         res.render('user/contacts', {
@@ -498,7 +510,7 @@ exports.getallcontacts = function (req, res) {
       });
     }
 
-
+// implements the delete contact takes id from body uses delete conatct method passing in id then redirencts to contacts page if there are errors writes errors and send a 500 interanl server error 
     exports.deletecontact = function (req, res) {
       try {
           const contactId = req.body._id;
