@@ -1,18 +1,18 @@
 const { title } = require("process");
-const guestbookDAO = require("../models/guestbookModel");
 const userDAO = require('../models/userModel.js');
 const pantryDAO = require('../models/donationModel.js');
+const contactDAO = require('../models/contactModel.js');
 
 const { response } = require("express");
 const { verify } = require("crypto");
 const { verifyAdmin, verifypantry } = require("../auth/auth.js");
 const user_db = new userDAO();
 const donationDB = new pantryDAO();
+const contact_db = new contactDAO();
+
 
 const jwt = require("jsonwebtoken");
 
-const db = new guestbookDAO();
-db.init();
 
 exports.show_login = function (req, res) {
   res.render("user/login",{
@@ -27,61 +27,33 @@ exports.handle_login = function (req, res) {
 
 exports.landing_page = function (req, res) {
   let accessToken = req.cookies.jwt;
-  if (accessToken) {
-    try{
+  try {
+    if (accessToken) {
       let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-        // Token is not expired, proceed with rendering entries
-        db.getAllEntries()
-          .then((list) => {
-            res.render("entries", {
-              title: "Guest Book",
-              entries: list,
-              token: payload.role,
-              'nav': true,
-            });
-          })
-          .catch((err) => {
-            console.log("promise rejected", err);
-          });
-  } catch (error) {
-    console.error('Token verification failed:', error);
-
-    db.getAllEntries()
-      .then((list) => {
+      // Token is not expired, proceed with rendering entries
+      if (payload.role) {
         res.render("entries", {
-          title: "Guest Book",
-          entries: list,
-          'nav': true
+          title: "Scotish Pantry Network",
+          token: payload.role,
+          'nav': true, 
         });
-      })
-      .catch((err) => {
-        console.log("promise rejected", err);
-      });
+        return; // Exit after rendering
+      } 
+    }
+  } catch (err) {
+    res.render("entries", {
+      title: "Scotish Pantry Network",
+      'nav': true, 
+    });
   }
-  }
-else {
-    db.getAllEntries()
-      .then((list) => {
-        res.render("entries", {
-          title: "Guest Book",
-          entries: list,
-          'nav': true
-        });
-      })
-      .catch((err) => {
-        console.log("promise rejected", err);
-      });
-  }
-};
 
-
-
-exports.show_new_entries = function (req, res) {
-  res.render("newEntry", {
-    title: "Guest Book",
-    user: "user",
+  // If no token or token verification failed, render the "entries" view with default settings
+  res.render("entries", {
+    title: "Scotish Pantry Network",
+    'nav': true, // Removed quotes around 'nav'
   });
-};
+}
+
 
 exports.post_new_entry = function (req, res) {
   console.log("processing post-new_entry controller");
@@ -176,7 +148,6 @@ exports.post_new_user = function (req, res) {
       }
 
       if (newUser) {
-          console.log("register user", username, "password", password);
           res.redirect("/login");
       } else {
           res.status(409).send("User already exists");
@@ -240,12 +211,16 @@ exports.makeDonation = function (req, res) {
 //pantry view all donations 
 exports.alldonations = function (req, res) {
   donationDB.expiredcheck()
+  let accessToken = req.cookies.jwt;
+  let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+  console.log(payload.role)
 
   donationDB.alldonations()
     .then((list) => {
       res.render('donations/viewalldonations', {
-        title: "donations",
+        title: "All Donations",
         entries: list,
+        token: payload.role,
         'nav': true,
       }); // Closing parenthesis was missing here
     })
@@ -280,6 +255,25 @@ exports.viewdonation = function (req, res) {
   }
 };
 
+exports.deletedonation = function (req, res) {
+  try {
+      const donationId = req.body._id;
+      donationDB.removeDonation(donationId)
+            .then(numRemoved => {
+                console.log("Donation deleted successfully. Number of documents removed:", numRemoved);
+                res.redirect("/alldonations");
+            })
+            .catch(err => {
+                console.error("Error deleting donation:", err);
+                res.status(500).json({ message: "Internal server error" });
+            });
+    } catch (error) {
+        console.error("Error deleting donation:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
 exports.claimed = function (req, res) {
   let accessToken = req.cookies.jwt;
   let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
@@ -288,8 +282,9 @@ exports.claimed = function (req, res) {
     donationDB.allpantrydonations(userid,)
     .then((list) => {
       res.render('donations/viewpantrydonations', {
-        title: "donations",
+        title: "Pantry Donations",
         entries: list,
+        token: payload.role,
         'nav': true,
       }); // Closing parenthesis was missing here
     })
@@ -300,6 +295,20 @@ exports.claimed = function (req, res) {
   }
 
   }
+
+  exports.unclaimDonation = function (req, res) {
+    let accessToken = req.cookies.jwt;
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    userid = payload._id
+    const donationId = req.params._id; // Extracting donation ID from request parameters
+    if(payload.role == 'pantry'){
+      donationDB.unclaimDonation(donationId)
+        res.redirect('/claimed')
+    }
+  }
+  
+
+
 
 //admin create users
 exports.createUsers = function (req, res) {
@@ -314,6 +323,47 @@ exports.createUsers = function (req, res) {
         });
       
 };
+
+//user control
+exports.userControl = function (req, res) {
+  try {
+      let accessToken = req.cookies.jwt;
+      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+      // Load users data asynchronously
+      user_db.loadUsers()
+          .then(users => {
+              res.render("user/userContol", {
+                  title: "Control users",
+                  token: payload.role,
+                  users: users,
+                  'nav': true
+              });
+          })
+          .catch(error => {
+              console.error("Error fetching users:", error);
+              res.status(500).json({ message: "Internal server error" });
+          });
+  } catch (error) {
+      console.error("Error verifying access token:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+exports.deleteuser = function (req, res) {
+  const userId = req.body.userId;
+  user_db.deleteUser(userId, (err) => {
+      if (err) {
+          console.error("Error deleting user:", err);
+          res.status(500).json({ message: "Internal server error" });
+      } else {
+          console.log("User deleted successfully:", userId);
+      }
+  });
+  res.redirect("/userControl");
+
+};
+
 
 exports.post_createUsers = function (req, res) {
   const username = req.body.username;
@@ -338,10 +388,141 @@ exports.post_createUsers = function (req, res) {
       }
 
       if (newUser) {
-          console.log("register user", username, "password", password, role, "role");
+          console.log("register user", username,  role, "role");
           res.redirect("/");
       } else {
           res.status(409).send("User already exists");
       }
   });
 };
+
+exports.aboutius = function (req, res) {
+  let accessToken = req.cookies.jwt;
+
+  try {
+    if (accessToken) {
+      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+
+      res.render("aboutus", {
+        title: "About Us",
+        token: payload.role,
+        'nav': true
+      });
+    } else {
+      // Handle case when there's no access token
+      res.render("aboutus", {
+        title: "About Us",
+        'nav': true    
+      }); 
+    }
+  } catch (error) {
+    res.render("aboutus", {
+      title: "About Us",
+      'nav': true  
+    }); 
+  }
+}
+
+
+exports.contact = function (req, res) {
+  let accessToken = req.cookies.jwt;
+
+  try {
+    if (accessToken) {
+      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+
+      res.render("contact", {
+        title: "Contact Us",
+        token: payload.role,
+        'nav': true
+      });
+    } else {
+      // Handle case when there's no access token
+      res.render("contact", {
+        title: "Contact Us",
+        'nav': true    
+      }); 
+    }
+  } catch (error) {
+    res.render("contact", {
+      title: "Contact Us",
+      'nav': true  
+    }); 
+  }
+}
+
+exports.sendcontact = function (req, res) {
+  let accessToken = req.cookies.jwt;
+  try {
+    if (accessToken) {
+      let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+
+      const help = req.body.help; 
+      console.log(help);
+      contact_db.createcontact(payload.user.username, help, (err, contact) => {
+        if (err) {
+          console.error("Error creating contact:", err);
+          res.status(500).json({ message: "Internal server error" });
+        } else {
+          console.log("Contact form created:", contact);
+          res.redirect('/'); 
+        }
+      });
+    } else {
+      // Handle case when there's no access token
+      res.render("contact", {
+        title: "Contact Us",
+        token: payload.role,
+        'nav': true    
+      }); 
+    }
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      console.error("JWT token expired");
+      // Handle token expiration here, e.g., redirect to login page
+      res.redirect('/login');
+    } else {
+      res.redirect('/login');
+    } 
+  }
+}
+
+
+exports.getallcontacts = function (req, res) {
+    contact_db.allcontacts()
+    let accessToken = req.cookies.jwt;
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+  
+    contact_db.allcontacts()
+      .then((list) => {
+        res.render('user/contacts', {
+          title: "All Contacts",
+          entries: list,
+          token: payload.role,
+          'nav': true,
+        }); // Closing parenthesis was missing here
+      })
+      .catch((err) => {
+        console.log("Error fetching donations:", err);
+        res.status(500).send("Error fetching donations");
+      });
+    }
+
+
+    exports.deletecontact = function (req, res) {
+      try {
+          const contactId = req.body._id;
+          contact_db.deletecontact(contactId)
+                .then(contactrem => {
+                    console.log("Donation deleted successfully. Number of documents removed:", contactrem);
+                    res.redirect("/contacts");
+                })
+                .catch(err => {
+                    console.error("Error deleting donation:", err);
+                    res.status(500).json({ message: "Internal server error" });
+                });
+        } catch (error) {
+            console.error("Error deleting donation:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    };

@@ -1,0 +1,43 @@
+<html>
+<head>
+        {{> main}}
+</head>
+<body>
+{{#if nav}}
+        {{> nav}}
+    {{/if}}
+    <h1>{{title}}</h1>
+
+
+   {{#each users}}
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"></h4>
+                <p class="card-text">
+                    <!-- Adjusted properties based on the data structure -->
+
+                </p>
+                <div class="card-footer">
+                    username: {{username}} 
+                    <br>
+
+                    role: {{role}}
+
+                    
+                    <br>
+            <form action="/deleteuser" method="post">
+            <input type="hidden" name="userId" value="{{_id}}">
+            <button type="submit">Delete</button>
+            </form>
+                </div>
+            </div>
+        </div>
+    {{/each}}
+
+    {{#unless users}}
+        No users found.
+    {{/unless}}
+
+
+</body>
+</html>

@@ -81,6 +81,36 @@ class dontation {
     });
 }
 
+unclaimDonation(donationId) {
+    return new Promise((resolve, reject) => {
+        donationDB.update({ _id: donationId }, { $set: { 'claimed': false, 'pantry': '' } }, {}, function (err, donations) {
+            if (err) {
+                console.log('error updating documents', err);
+                reject(err);
+            } else {
+                console.log(donations, 'documents updated');
+                resolve(donations);
+            }
+        });
+    });
+}
+
+
+
+
+removeDonation(donationId) {
+    return new Promise((resolve, reject) => {
+        donationDB.remove({_id: donationId}, function(err, result) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+
 
 
 expiredcheck() {

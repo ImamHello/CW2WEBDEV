@@ -34,9 +34,19 @@ handlebars.handlebars.registerHelper('if_eq', function(a, b, opts) {
         return opts.inverse(this);
 });
 
+handlebars.handlebars.registerHelper('if_not', function(a, opts) {
+    if (!a) {
+        return opts.fn(this);
+    } else {
+        return opts.inverse(this);
+    }
+});
+
+
+
 handlebars.handlebars.registerHelper('formatTime', function (date, format) {
-    var mmnt = moment(date);
-    return mmnt.format(format);
+    var convert = moment(date);
+    return convert.format(format);
 });
 
 

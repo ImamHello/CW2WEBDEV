@@ -12,17 +12,19 @@
     {{#entries}}
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title"> Donate by {{username}}</h4>
+            <h4 class="card-title"> Donate by {{author}}</h4>
             
             <div class="card-footer">
-                expires: {{formatTime exdate "DD-MM-YYYY"}} 
                 <br>
-                additional information: {{additional}} 
-                <br>
-                <a href="/unclaim/{{_id}}">unclaim</a>
+                detailed information: {{details}} 
                 <br>
                 <br>
-            <a href="/delete/{{_id}}">Delete</a>            
+
+
+                <form action="/contacts" method="post">
+                <input type="hidden" name="_id" id="_id" value="{{_id}}">
+                <button type="submit">delete</button>
+                </form>
             </div>
         </div>
     </div>

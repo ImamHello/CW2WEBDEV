@@ -20,11 +20,11 @@
         <li class="nav-item">
           <a class="nav-link" href="/about">About Us</a>
         </li>
-        {{#if token}}
+        {{#if_eq token 'user'}}
         <li class="nav-item">
           <a class="nav-link" href="/contact">Contact</a>
         </li>
-        {{/if}}
+        {{/if_eq}}
 
         {{#if_eq token 'user'}}
             <li class="nav-item">
@@ -44,40 +44,51 @@
             </li>
           {{/if_eq}}
 
-      </ul>
-    </div>
-
-    <div class="navbar justify-content-end">
-      <ul class="navbar-nav">
-
-      {{#unless token}}
-          <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
-          </li>
-      {{/unless }}
-          {{#if_eq token 'user'}}
+          {{#if_eq token 'pantry'}}
             <li class="nav-item">
-              <a class="nav-link" href="#">{{token}}</a>
+              <a class="nav-link" href="/claimed">Pantry Donations</a>
             </li>
           {{/if_eq}}
 
           {{#if_eq token 'admin'}}
             <li class="nav-item">
-              <a class="nav-link" href="#">{{token}}</a>
+              <a class="nav-link" href="/userControl">User Control</a>
             </li>
           {{/if_eq}}
 
-          {{#if_eq token 'pantry'}}
+        {{#if_eq token 'admin'}}
             <li class="nav-item">
-              <a class="nav-link" href="#">{{token}}</a>
+              <a class="nav-link" href="/alldonations">All Donations</a>
             </li>
           {{/if_eq}}
+
+          {{#if_eq token 'admin'}}
+            <li class="nav-item">
+              <a class="nav-link" href="/contacts">All contacts</a>
+            </li>
+          {{/if_eq}}
+
+        {{#if_not token}}
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+        {{/if_not}}
+        {{#if_not token}}
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Resgister</a>
+            </li>
+        {{/if_not}}
+
+        {{#if token}}
 
         <li class="nav-item">
           <a class="nav-link" href="/logout" id="logout">Log Out</a>
         </li>
+        {{/if }}
+
       </ul>
     </div>
+
   </nav>
 </body>
 

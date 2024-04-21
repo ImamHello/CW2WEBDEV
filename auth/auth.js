@@ -91,3 +91,23 @@ exports.verifypantry = function (req, res, next)
     res.status(401).send(); // Unauthorized due to token verification failure
   }
 };
+
+
+exports.verifyspecial = function (req, res, next) 
+{
+  let accessToken = req.cookies.jwt;
+  try {
+    let payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    if (payload.role !== "pantry" && payload.role !== "admin") {
+      return res.status(403).send();
+    }
+    next();
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      console.error('JWT token expired');
+      return res.redirect("/login"); // Redirect to login page if token is expired
+    }
+    console.error('Token verification failed:', error);
+    res.status(401).send(); // Unauthorized due to token verification failure
+  }
+};

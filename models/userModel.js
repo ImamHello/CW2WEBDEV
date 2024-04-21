@@ -88,6 +88,37 @@ class User {
         });
     }
 
+    loadUsers()
+    {
+        return new Promise((resolve, reject) => 
+        {
+            userDB.find({ role: { $in: ["user", "pantry"] } }, function(err, users) {            
+                if(err)
+                {
+                    reject(err);
+                }
+                else
+                {
+                    resolve(users)
+                    console.log("Function returns: ", users);
+                }
+            });
+        });
+    }
+
+    
+    deleteUser(id) {
+        return new Promise((resolve, reject) => {
+            userDB.remove({_id: id}, function(err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+    
 
 getPantrys() 
 {

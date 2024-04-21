@@ -1,0 +1,29 @@
+<html>
+<head>
+    {{>main}}
+</head>
+<body>
+    {{>nav}}
+  <div class="container">
+        <h1 class="d-flex align-items-center justify-content-center">{{title}}</h1>
+
+
+    <form method="POST" action="/contact" class="d-flex align-items-center justify-content-center">
+    <row>
+    <div class="d-flex align-items-center justify-content-center form-group">
+    <label for="help" class="d-flex align-items-center justify-content-center form-group col-12">What seems to be the problem</label>
+    </div>
+          <div class="d-flex align-items-center justify-content-center">
+        <br>
+      <textarea class="col-12" style="height: 14vh;" id="help" name="help" placeholder="Enter text here.." required></textarea>
+    </div>
+<br>
+      <input class="col-12 btn btn-primary rounded-pill" type="submit" value="Send">
+    </row>
+    
+
+    </form>
+  </div>
+
+</body>
+</html>

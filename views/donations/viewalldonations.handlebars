@@ -8,11 +8,33 @@
     {{/if}}
     <h1>{{title}}</h1>
 
+    {{#if_eq token 'admin'}}
 
     {{#entries}}
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">{{pantry}}</h4>
+
+            <h4 class="card-title"></h4>
+            <p class="card-text">
+                {{contents}}
+            </p>
+            <div class="card-footer">
+                Donate by {{username}}</a>, expires: {{formatTime exdate "DD-MM-YYYY"}} additional information: {{additional}} 
+                <br>
+                <form action="/alldonations" method="post">
+                <input type="hidden" name="_id" id="_id" value="{{_id}}">
+                <button type="submit">delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{/entries}}
+
+    {{else}}
+<div class="card">
+        <div class="card-body">
+
+            <h4 class="card-title"></h4>
             <p class="card-text">
                 {{contents}}
             </p>
@@ -20,10 +42,13 @@
                 Donate by {{username}}</a>, expires: {{formatTime exdate "DD-MM-YYYY"}} additional information: {{additional}} 
                 <br>
                 <a href="/claim/{{_id}}">claim</a>
+                <br>
             </div>
         </div>
     </div>
-    {{/entries}}
+    {{/if_eq}}
+
+
     {{^entries}}
     No entries yet.
     {{/entries}}
