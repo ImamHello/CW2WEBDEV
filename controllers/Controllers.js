@@ -362,7 +362,8 @@ exports.post_createUsers = function (req, res) {
           console.log("register user", username,  role, "role");
           res.redirect("/");
       } else {
-          res.status(409).send("User already exists");
+          res.redirect("/");
+
       }
   });
 };
